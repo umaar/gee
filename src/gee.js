@@ -4,6 +4,18 @@
 // ==/ClosureCompiler==
 window['GEE'] = function(params) {
 	
+	if ( !params ) {
+		params = {};
+	}
+	
+	// Do we support canvas?
+	if (!document.createElement('canvas').getContext) {
+		if ( params.fallback ) { 
+			params.fallback();
+		}
+		return;
+	}	
+	
 	var _this = this,
 		u = undefined, // shorthand,
 		k = 1E3,
@@ -28,15 +40,18 @@ window['GEE'] = function(params) {
 		d; // shorthand for the dom element
 		
 	var getOffset = function() {
-		// TODO:
-		offset = {x: 0, y: 0};
+		var obj = d;
+		var x = 0, y = 0;
+		while (obj) {
+			y += obj.offsetTop;
+			x += obj.offsetLeft;
+			obj = obj.offsetParent;
+		}
+		console.log(x, y);
+		offset = {x:x, y:y};
 	};
 	
 	// Default parameters
-	
-	if ( !params ) {
-		params = {};
-	}
 
 	if ( !params['context'] ) {
 		params['context'] = '2d';
@@ -54,6 +69,15 @@ window['GEE'] = function(params) {
 	
 	d = _this['domElement'] = document.createElement('canvas');
 	_privateParts['ctx'] = d.getContext(params['context']);
+	
+	// Are we capable of this context?
+	
+	if ( _privateParts['ctx'] == null) {
+		if ( params.fallback ) { 
+			params.fallback();
+		}
+		return;
+	}
 	
 	// Set up width and height setters / listeners
 	
@@ -93,6 +117,7 @@ window['GEE'] = function(params) {
 	
 	if (params['container']) {
 		params['container'].appendChild(d);
+		getOffset();
 	}	
 	
 	
@@ -104,6 +129,7 @@ window['GEE'] = function(params) {
 		});
 	};
 	
+	// Would love to reduce this to params.
 	getter('ctx');
 	getter('width');
 	getter('height');
@@ -150,6 +176,10 @@ window['GEE'] = function(params) {
 	
 	// Listeners
 	
+	d.addEventListener('mouseenter', function(e) {
+		getOffset();
+	}, f);
+	
 	d.addEventListener('mousemove', function(e) {
 		var x = e.pageX - offset.x;
 		var y = e.pageY - offset.y;
@@ -190,11 +220,29 @@ window['GEE'] = function(params) {
 		_privateParts['keyPressed'] = f;
 		_this['keyup']();
 	}, f);
+	
+	var requestAnimationFrame = (function() {
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function (callback) {
+                window.setTimeout(callback, _actualFrameTime);
+              };
+    })();
 		
 	_idraw = function() {
+	
+		if (_this['loop']) {
+			requestAnimationFrame( _idraw );
+		}
+	
 		_privateParts['frameCount']++;
 		var prev = new Date().getTime();
+		
 		_this['draw']();
+		
 		var delta = new Date().getTime() - prev;
 		
 		if (delta > _privateParts['frameTime']) { 
@@ -203,9 +251,6 @@ window['GEE'] = function(params) {
 			_actualFrameTime = _privateParts['frameTime'];
 		}
 		
-		if (_this['loop']) {
-			setTimeout(_idraw, _actualFrameTime);
-		}
 	};
 	
 	_idraw();

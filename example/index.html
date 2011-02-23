@@ -1,7 +1,6 @@
 <html>
 <head>
-<script type="text/javascript" src="../build/gee.min.js"></script>
-
+<script type="text/javascript" src="../src/gee.js"></script>
 <script type="text/javascript" src="traer.js"></script>
 <script type="text/javascript" src="ribbons.js"></script>
 
@@ -16,7 +15,12 @@ window.onload = function() {
 
 	var active;
 	
-	g = new GEE({ fullscreen: true });
+	g = new GEE({ context: '2d', 
+				  container: document.body, 
+				  fallback: function() {
+				  	alert("You got no canvas!"); 
+				  }
+				});
 
 	g.draw = function() {
 		
@@ -37,8 +41,8 @@ window.onload = function() {
 	};
 	
 	g.mousedrag = function() {
-		if (dist(g.mouseX, g.mouseY+g.height/2, active.latestX, active.latestY) > Ribbon.Tightness) {
-			active.addPoint(g.mouseX, g.mouseY+g.height/2);
+		if (dist(g.mouseX, g.mouseY, active.latestX, active.latestY) > Ribbon.Tightness) {
+			active.addPoint(g.mouseX, g.mouseY);
 		}
 	};
 	
