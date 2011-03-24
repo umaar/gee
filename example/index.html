@@ -1,92 +1,118 @@
 <html>
 <head>
 <title>gee.js</title>
-<style type="text/css">
-body { 
-color: #333;
-font: 11px/18px Lucida Grande, Arial, sans-serif;
-}
-#container { 
-width: 515px;
-margin: 0 auto;
-}
-dt { 
-float: left;
-width: 110px;
-clear: both;
-font-weight: bold;
-}
-dd { 
-float: right;
-width: 340px;
-margin-bottom: 15px;
-}
-hr { 
-height: 1;
-clear: both;
-border: 0;
-background-color: #eee;
-margin: 15px 0 18px 0;
-}
-code { 
-font-family: Monaco, monospace;
-color: #555;
-}
-dt:after { 
-display: block;
-float: right;
-font-weight: normal;
-border-radius: 5px;
-background-color: #000;
-color: #fff;
-font-size: 9px;
-font-weight: bold;
-padding: 0 5px;
-margin-right: -35px;
-}
-dt.function:after { 
-content: 'func';
-background-color: #e61d5f;
-}
-dt.number:after { 
-content: 'num';
-background-color: #00aeef;
-}
-dt.string:after { 
-content: 'char';
-background-color: #1ed36f;
-}
-dt.boolean:after { 
-content: 'bool';
-background-color: #54396e;
-}
-.hint {
-display: block;
-color: #666;
-font-style: italic;
-}
-dt.readonly { 
-background: url(lock.gif) left center no-repeat;
-padding-left: 30px;
-margin-left: -30px;
-}
-</style>
+<link href="style.css" media="screen" rel="stylesheet" type="text/css" /> 
+<script type="text/javascript" src="prettify.js"></script>
+<script type="text/javascript">
+window.onload = function() {
+
+	prettyPrint();
+};
+</script>
 </head>
 <body>
 <div id="container">
 
+<p><strong>gee.js</strong> is a library that makes it quick to start sketching with the HTML5 <code>&lt;canvas&gt;</code>.</p>
 
+<h2>Creating a fullscreen 2D <code>&lt;canvas&gt;</code></h2>
+<pre class="prettyprint">&lt;script type="text/javascript" src="gui.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+ 
+window.onload = function() {
+ 
+   var g = new <code>GEE</code>( { fullscreen: true } );
+   
+   g.draw = function() {
+   
+      g.ctx.clearRect( 0, 0, g.width, g.height );
+      g.ctx.fillText( g.frameCount, 10, 10 );
+      
+   };
+   
+   g.mousedrag = function() {
+   	
+      g.ctx.beginPath();
+      g.ctx.moveTo( g.pmouseX, g.pmouseY );
+      g.ctx.lineTo( g.mouseX, g.mouseY );
+      g.ctx.stroke();
+   	
+   };
+
+};
+
+&lt;/script&gt;</pre> 
+
+<p>
+Passing the parameter <code>fullscreen:true</code> to <code>GEE</code>'s constructor automatically removes padding/margin from the HTML document and appends a <code>&lt;canvas&gt;</code> to the body that scales with the window.</p><p>You can override event properties such as <code>draw</code> and <code>mousedrag</code> to implement the behavior of your choosing. <a href="#props">A complete list</a> of <code>GEE</code>'s properties are below.</p>
+</p>
 
 <hr/>
+
+<h2>Parameters for <code>GEE</code>'s constructor</h2>
+
+<pre class="prettyprint">
+var g = new GEE( { width: 600, height: 480, container: document.body } );
+
+// &hellip; does the same thing as &hellip;
+
+var g = new GEE( { width: 600, height: 480 } );
+document.body.appendChild( g.domElement );
+</pre>
+
+<pre class="prettyprint">
+var g = new GEE( { width: 200, 
+                   height: 200, 
+                   context: 'experimental-webgl',
+                   container: document.getElementById( 'canvas-holder' ),
+                   fallback: function() {
+                     alert( "You don't have WebGL." )
+                   } );
+</pre>
+
+<dl>
+<dt class="string">context</dt><dd>type of rendering context<span class="hint">e.g. '2d' or 'experimental-webgl'</span></dd>
+<dt class="dom">container</dt><dd>DOM element to which we append the <code>&lt;canvas&gt;</code> element</dd>
+<dt class="number">width</dt><dd>initial width of the <code>&lt;canvas&gt;</code> element</dd>
+<dt class="number">height</dt><dd>initial height of the <code>&lt;canvas&gt;</code> element</dd>
+<dt class="function">fallback</dt><dd>fires if something goes wrong</dd>
+</dl>
+
+<hr/>
+<h2><a name="props"></a>Properties of a <code>GEE</code> object</h2>
+
+<pre class="prettyprint">
+// a GEE object has lots of properties.
+
+// Some you can set &hellip;
+g.frameRate = 30;
+g.height = 200;
+g.mousedown = function() { console.log( 'You pressed the canvas' ) };
+g.keydown = function() { console.log( 'You pressed ' + g.key ) };
+g.loop = false;
+
+
+g.draw = function() {
+
+   // Some you just read &hellip;
+   
+   if ( g.mouseX > g.width/2 ) {
+      g.ctx.fillRect( g.mouseX, g.mouseY, 10, 10 );
+   }
+	
+}
+</pre>
+
+<p>Below is a list of all of <code>GEE</code>'s properties. The &nbsp;<img src="lock.gif" alt="lock" />&nbsp; indicates that a property is read-only.</p>
+
 <dl id="doc">
 <dt class="special readonly">ctx</dt>	<dd>current rendering context</dd>
-<dt class="special readonly">domElement</dt>	<dd>the DOM <code>&lt;canvas&gt;</code> element</dd>
+<dt class="dom readonly">domElement</dt>	<dd>the DOM <code>&lt;canvas&gt;</code> element</dd>
 
 <hr/>
 
-<dt class="number">height</dt>	<dd>height of the <code>&lt;canvas&gt;</code> element</dd>
-<dt class="number">width</dt>	<dd>width of the <code>&lt;canvas&gt;</code> element</dd>
-
+<dt class="number">width</dt>	<dd>current width of the <code>&lt;canvas&gt;</code> element</dd>
+<dt class="number">height</dt>	<dd>current height of the <code>&lt;canvas&gt;</code> element</dd>
 
 <dt class="number">frameRate</dt>	<dd>sets desired frames per second<br/>returns actual frames per second</dd>
 
@@ -125,10 +151,9 @@ margin-left: -30px;
 
 <dt class="boolean">loop</dt>	<dd>if true, draw is fired repeatedly <span class="hint"><code>loop</code> is true by default.</span></dd>
 
-<hr/>
-
-
 </dl>
+<div class="clear"></div>
+<footer>By <a href="http://georgemichaelbrower.com/">George Michael Brower</a> and <a href="http://jonobr1.com/">Jono Brandel</a> of the Data Arts Team, Google Creative Lab.</footer>
 </div>
 </body>
 </html>
