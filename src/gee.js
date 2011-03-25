@@ -180,7 +180,11 @@ window['GEE'] = function(params) {
 		getOffset();
 	}, f);
 	
-	d.addEventListener('mousemove', function(e) {
+	var mm = function(e) {
+		_this['mousemove']();
+	};
+	
+	var mmm = function(e) {
 		var x = e.pageX - offset.x;
 		var y = e.pageY - offset.y;
 		if (_privateParts['pmouseX'] == u) {
@@ -192,19 +196,23 @@ window['GEE'] = function(params) {
 		}
 		_privateParts['mouseX'] = x;
 		_privateParts['mouseY'] = y;
-		_this['mousemove']();
-	}, f);
+	}
+	
+	d.addEventListener('mousemove', mmm, f);
+	d.addEventListener('mousemove', mm, f);
 	
 	d.addEventListener('mousedown', function() {
 		_privateParts['mousePressed'] = true;
 		_this['mousedown']();
 		d.addEventListener('mousemove', _this['mousedrag'], f);
+		d.removeEventListener('mousemove', mm, f);
 	}, f);
 
 	d.addEventListener('mouseup', function() {
 		_privateParts['mousePressed'] = f;
 		_this['mouseup']();
 		d['removeEventListener']('mousemove', _this['mousedrag'], f);
+		d.addEventListener('mousemove', mm, f);
 	}, f);
 	
 	document.addEventListener('keypressed', function(e) {
