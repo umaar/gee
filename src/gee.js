@@ -9,7 +9,7 @@ window['GEE'] = function(params) {
 	}
 	
 	// Do we support canvas?
-	if (!document.createElement('canvas').getContext) {
+	if ( !document.createElement('canvas').getContext ) {
 		if ( params.fallback ) { 
 			params.fallback();
 		}
@@ -17,26 +17,24 @@ window['GEE'] = function(params) {
 	}	
 	
 	var _this = this,
-		u = undefined, // shorthand,
-		k = 1E3,
-		f = false,
+		_keysDown = {},
 		_privateParts = 
-		{
-			'ctx':u,
-			'width':u,
-			'height':u,
-			'frameTime':k/60,
-			'frameCount':0,
-			'key':u,
-			'keyCode':u,
-			'mouseX':0,
-			'mouseY':0,
-			'pmouseX':u,
-			'pmouseY':u,
-			'mousePressed':f,
-			'keyPressed':f
+		 {
+			'ctx':		    undefined,
+			'domElement':   undefined,
+			'width':	    undefined,
+			'height':	    undefined,
+			'desiredFrameTime':    1E3/60,
+			'frameCount':   0,
+			'key':	        undefined,
+			'keyCode':      undefined,
+			'mouseX':       0,
+			'mouseY':       0,
+			'pmouseX':	    undefined,
+			'pmouseY':	    undefined,
+			'mousePressed': false
 		},
-		_actualFrameTime = _privateParts['frameTime'],
+		_actualFrameTime = undefined,
 		d; // shorthand for the dom element
 		
 	var getOffset = function() {
@@ -47,8 +45,7 @@ window['GEE'] = function(params) {
 			x += obj.offsetLeft;
 			obj = obj.offsetParent;
 		}
-		console.log(x, y);
-		offset = {x:x, y:y};
+		offset = { x:x, y:y };
 	};
 	
 	// Default parameters
@@ -67,8 +64,8 @@ window['GEE'] = function(params) {
 	
 	// Create domElement, grab context
 	
-	d = _this['domElement'] = document.createElement('canvas');
-	_privateParts['ctx'] = d.getContext(params['context']);
+	d = _privateParts['domElement'] = document.createElement('canvas');
+	_privateParts['ctx'] = d.getContext( params['context'] );
 	
 	// Are we capable of this context?
 	
@@ -81,31 +78,31 @@ window['GEE'] = function(params) {
 	
 	// Set up width and height setters / listeners
 	
-	if (params['fullscreen']) {
+	if ( params['fullscreen'] ) {
 
 		var onResize = function() {
 			getOffset();
-			_privateParts['width'] = _this['domElement'].width = window.innerWidth;
-			_privateParts['height'] = _this['domElement'].height = window.innerHeight;
+			_privateParts['width'] = d['width'] = window.innerWidth;
+			_privateParts['height'] = d['height'] = window.innerHeight-4;
 		};
-		window.addEventListener('resize', onResize, f);
+		window.addEventListener( 'resize', onResize, false );
 		onResize();
 		
-		if (!params['container']) {
+		if ( !params['container'] ) {
 			params['container'] = document['body'];
 		}
-		document.body.style.margin = 0;
-		document.body.style.padding = 0;
+		document.body.style.margin = '0px';
+		document.body.style.padding = '0px';
 		
 	} else { 
 		
 		getOffset();
 		_this.__defineSetter__('width', function(v) {
-			_privateParts['width'] = this['domElement']['width'] = v;
+			_privateParts['width'] = d['width'] = v;
 		});
 		
 		_this.__defineSetter__('height', function(v) {
-			_privateParts['height'] = this['domElement']['height'] = v;
+			_privateParts['height'] = d['height'] = v;
 		});
 		
 		_this['width'] = params['width'];
@@ -115,14 +112,12 @@ window['GEE'] = function(params) {
 	
 	// Put it where we talked about (if we talked about it).
 	
-	if (params['container']) {
+	if ( params['container'] ) {
 		params['container'].appendChild(d);
 		getOffset();
 	}	
 	
-	
-	// DO YOU SEE A PATTERN???
-	
+
 	var getter = function(n) {
 		_this.__defineGetter__(n, function() {
 			return _privateParts[n];
@@ -130,11 +125,10 @@ window['GEE'] = function(params) {
 	};
 	
 	// Would love to reduce this to params.
+	
 	getter('ctx');
 	getter('width');
 	getter('height');
-	getter('frameTime');
-	getter('frameRate');
 	getter('frameCount');
 	getter('key');
 	getter('keyCode');
@@ -143,51 +137,62 @@ window['GEE'] = function(params) {
 	getter('pmouseX');
 	getter('pmouseY');
 	getter('mousePressed');
-	getter('keyPressed');
-	
-	_this.__defineGetter__('frameRate', function(v) {
-		return k/_actualFrameTime;
-	});
-	
-	// Might as well just work like a getter and setter.
 	
 	var n = function() {};
 	
+	// TODO: Ensure data type
 	_this['loop'] = true;
-	_this['keyup'] = n; // TODO
-	_this['keydown'] = n; // TODO
+	
+	// TODO: Ensure data type
+	_this['keyup'] = n;
+	_this['keydown'] = n;
 	_this['draw'] = n;
 	_this['mousedown'] = n;
 	_this['mouseup'] = n;
 	_this['mousemove'] = n;
 	_this['mousedrag'] = n;
 	
-	// Setters
+	// Custom Getters & Setters
+	
+	_this.__defineGetter__('frameRate', function(v) {
+		return 1E3/_actualFrameTime;
+	});
+	
+	_this.__defineGetter__('frameTime', function(v) {
+		return _actualFrameTime;
+	});
+	
+	_this.__defineGetter__('keyPressed', function(v) {
+		for (var i in _keysDown) {
+			if (_keysDown[i]) {
+				return true;
+			}
+		}
+		return false;
+	});
 	
 	_this.__defineSetter__('frameTime', function(v) {
-		_privateParts['frameTime'] = v;
-		_actualFrameTime = v;
+		_privateParts['desiredFrameTime'] = v;
 	});
 	
 	_this.__defineSetter__('frameRate', function(v) {
-		_privateParts['frameTime'] = k/v;
-		_actualFrameTime = k/v;
+		_privateParts['desiredFrameTime'] = k/v;
 	});
 	
 	// Listeners
 	
 	d.addEventListener('mouseenter', function(e) {
 		getOffset();
-	}, f);
+	}, false);
 	
-	var mm = function(e) {
+	var fireMouseMove = function(e) {
 		_this['mousemove']();
 	};
 	
-	var mmm = function(e) {
+	var updateMousePosition = function(e) {
 		var x = e.pageX - offset.x;
 		var y = e.pageY - offset.y;
-		if (_privateParts['pmouseX'] == u) {
+		if (_privateParts['pmouseX'] == undefined) {
 			_privateParts['pmouseX'] = x;
 			_privateParts['pmouseY'] = y;
 		} else { 
@@ -198,36 +203,40 @@ window['GEE'] = function(params) {
 		_privateParts['mouseY'] = y;
 	}
 	
-	d.addEventListener('mousemove', mmm, f);
-	d.addEventListener('mousemove', mm, f);
+	d.addEventListener('mousemove', updateMousePosition, false);
+	d.addEventListener('mousemove', fireMouseMove, false);
 	
 	d.addEventListener('mousedown', function() {
 		_privateParts['mousePressed'] = true;
 		_this['mousedown']();
-		d.addEventListener('mousemove', _this['mousedrag'], f);
-		d.removeEventListener('mousemove', mm, f);
-	}, f);
+		d.addEventListener('mousemove', _this['mousedrag'], false);
+		d.removeEventListener('mousemove', fireMouseMove, false);
+	}, false);
 
 	d.addEventListener('mouseup', function() {
-		_privateParts['mousePressed'] = f;
+		_privateParts['mousePressed'] = false;
 		_this['mouseup']();
-		d['removeEventListener']('mousemove', _this['mousedrag'], f);
-		d.addEventListener('mousemove', mm, f);
-	}, f);
+		d['removeEventListener']('mousemove', _this['mousedrag'], false);
+		d.addEventListener('mousemove', fireMouseMove, false);
+	}, false);
 	
-	document.addEventListener('keypressed', function(e) {
-		_privateParts['key'] = String.fromCharCode(e.keyCode); // Kinda busted.
-		_privateParts['keyCode'] = e.keyCode;
-		_privateParts['keyPressed'] = true;
+	window.addEventListener('keydown', function(e) {
+		var kc = e.keyCode;
+		_privateParts['key'] = String.fromCharCode(kc); // Kinda busted.
+		_privateParts['keyCode'] = kc;
+		_keysDown[kc] = true;
 		_this['keydown']();
-	}, f);
+	}, false);
 	
-	document.addEventListener('keyup', function(e) {
-		_privateParts['key'] = String.fromCharCode(e.keyCode); // Kinda busted.
-		_privateParts['keyCode'] = e.keyCode;
-		_privateParts['keyPressed'] = f;
+	window.addEventListener('keyup', function(e) {
+		var kc = e.keyCode;
+		_privateParts['key'] = String.fromCharCode(kc); // Kinda busted.
+		_privateParts['keyCode'] = kc;
+		_keysDown[kc] = false;
 		_this['keyup']();
-	}, f);
+	}, false);
+	
+	// Internal loop.
 	
 	var requestAnimationFrame = (function() {
       return  window.requestAnimationFrame       || 
@@ -242,7 +251,7 @@ window['GEE'] = function(params) {
 		
 	_idraw = function() {
 	
-		if (_this['loop']) {
+		if ( _this['loop'] ) {
 			requestAnimationFrame( _idraw );
 		}
 	
@@ -253,10 +262,10 @@ window['GEE'] = function(params) {
 		
 		var delta = new Date().getTime() - prev;
 		
-		if (delta > _privateParts['frameTime']) { 
+		if (delta > _privateParts['desiredFrameTime']) { 
 			_actualFrameTime = delta;
 		} else {
-			_actualFrameTime = _privateParts['frameTime'];
+			_actualFrameTime = _privateParts['desiredFrameTime'];
 		}
 		
 	};

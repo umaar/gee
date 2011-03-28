@@ -6,7 +6,9 @@ padding: 0;
 body { 
 color: #333;
 font: 11px/18px Lucida Grande, Arial, sans-serif;
-margin-top: 100px;
+}
+canvas { 
+margin: 20px 0;
 }
 #container { 
 width: 515px;
@@ -133,6 +135,10 @@ pre {
     clear: both;
 }
 
+
+ol, ul { 
+padding-left: 25px;
+}
 
 /* SPAN elements with the classes below are added by prettyprint. */
 .str { color: #0fa954; }
