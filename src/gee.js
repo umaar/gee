@@ -83,7 +83,7 @@ window['GEE'] = function(params) {
 		var onResize = function() {
 			getOffset();
 			_privateParts['width'] = d['width'] = window.innerWidth;
-			_privateParts['height'] = d['height'] = window.innerHeight-4;
+			_privateParts['height'] = d['height'] = window.innerHeight;
 		};
 		window.addEventListener( 'resize', onResize, false );
 		onResize();
@@ -93,6 +93,7 @@ window['GEE'] = function(params) {
 		}
 		document.body.style.margin = '0px';
 		document.body.style.padding = '0px';
+		document.body.style.overflow = 'hidden';
 		
 	} else { 
 		
