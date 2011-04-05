@@ -1,17 +1,5 @@
-<!doctype html>
-<head>
+function demo(g) {
 
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
-	<title></title>
-	
-	<script type="text/javascript" src="../src/gee.js"></script> 
-	<script type="text/javascript">
-	window.onload = function() {
-		
-	var g = new GEE({fullscreen:true});
 	var signs = [];
 	var topSigns = [];
 	
@@ -37,36 +25,39 @@
 		
 		g.ctx.textAlign = 'left';
 		g.ctx.fillStyle = '#666';
+		
 		if (false) {
-		g.ctx.fillText('g.keyPressed: ' + g.keyPressed, 30, 40);
-		g.ctx.fillText('g.mousePressed: ' + g.mousePressed, 30, 60);
-		g.ctx.fillText('g.frameRate: ' + g.frameRate, 30, 80);
-		g.ctx.fillText('g.frameTime: ' + g.frameTime, 30, 100);
-		g.ctx.fillText('g.frameCount: ' + g.frameCount, 30, 120);
+			g.ctx.fillText('g.keyPressed: ' + g.keyPressed, 30, 40);
+			g.ctx.fillText('g.mousePressed: ' + g.mousePressed, 30, 60);
+			g.ctx.fillText('g.frameRate: ' + g.frameRate, 30, 80);
+			g.ctx.fillText('g.frameTime: ' + g.frameTime, 30, 100);
+			g.ctx.fillText('g.frameCount: ' + g.frameCount, 30, 120);
 		}
 		
-		var p = 6;
-		var h2 = Math.round(g.height/2)+0.5;
-		var w2 = Math.round(g.width/2)+0.5;
-		
-		g.ctx.fillStyle = '#bbb';		
-		g.ctx.font = 'italic 12px Georgia, serif';
-		g.ctx.textAlign = 'center';
-		g.ctx.fillText('g.width: ' + g.width, g.width/4, h2+3);
-		g.ctx.fillText('g.height: ' + g.height, w2, g.height/4+4);
-		
-		
-		g.ctx.strokeStyle = '#ddd';
-		
-		g.ctx.shadowOffsetY = 0;
-		g.ctx.shadowOffsetX = 0;
-		
-		line(g.ctx, p, h2, g.width/4-45, h2);
-		line(g.ctx, g.width/4+45, h2, g.width-p, h2);
-		
-		line(g.ctx, w2, p, w2, g.height/4-15);
-		line(g.ctx, w2, g.height/4+15, w2, g.height-p);
-		
+		if (false) {
+			
+			var p = 6;
+			var h2 = Math.round(g.height/2)+0.5;
+			var w2 = Math.round(g.width/2)+0.5;
+			
+			g.ctx.fillStyle = '#bbb';		
+			g.ctx.font = 'italic 12px Georgia, serif';
+			g.ctx.textAlign = 'center';
+			g.ctx.fillText('g.width: ' + g.width, g.width*3/4.0, h2+3);
+			g.ctx.fillText('g.height: ' + g.height, w2, g.height*3.0/4+4);
+			
+			g.ctx.strokeStyle = '#ddd';
+			
+			g.ctx.shadowOffsetY = 0;
+			g.ctx.shadowOffsetX = 0;
+			
+			line(g.ctx, p, h2, g.width*3/4-45, h2);
+			line(g.ctx, g.width*3/4+45, h2, g.width-p, h2);
+			
+			line(g.ctx, w2, p, w2, g.height*3/4-15);
+			line(g.ctx, w2, g.height*3/4+15, w2, g.height-p);
+			
+		}
 		
 		for (var i = 0; i < signs.length; i++) {
 			signs[i].update();
@@ -121,8 +112,11 @@
 		var x = Math.random()*(g.width*3/4.0) + g.width/8.0;
 		var y = g.height;
 		var drag = 0.6;
-		var s = Math.random()*0.2 + 0.5;
+		var ss = Math.random()*0.2 + 0.5;
 		var r = 0;
+		var age = 0;
+		var deathAge = 45;
+		var deathLength = 3 + parseInt(Math.random()*5);
 		var rs = (Math.random()*0.01-0.005);
 		this.update = function() { 	
 			yvel += acc;
@@ -131,23 +125,50 @@
 			x += xvel;
 			y += yvel;
 			r += rs;
+			if (age > deathAge) {
+				this.die();
+				this.return;
+			}
+		}
+		this.die = function(c) {
+			arr.splice(arr.indexOf(this), 1);
 		}
 		this.draw = function(c) {
 			c.fillStyle = '#0fa954';
 			c.save();
 			c.globalAlpha = 0.9;
 			c.translate(x, y);
-			c.scale(s, s);
+			if (age > deathAge - deathLength) {
+				var s = age - (deathAge - deathLength);
+				s = (deathLength-s)/deathLength;
+				s = Math.sqrt(s);
+				if (ss*s <= 0) {
+					c.restore();
+					return;
+				}
+				c.scale(ss*s, ss*s);
+			} else { 
+				if (ss <= 0) {
+					c.restore();
+					return;
+				}
+				c.scale(ss, ss);
+			}
 			c.rotate(r);
+			c.shadowBlur = 0;		
+			c.shadowColor = 'rgba(0,0,0,0)';
+			c.shadowOffsetY = 0;
+			c.shadowOffsetX = 0;
 			c.beginPath()
 			c.arc(0, 0, radius, 0, Math.PI*2, false);
 			c.fill();
-			c.fillStyle = '#fff';
-			c.font = '72px "Croog", sans-serif';
+			c.fillStyle = '#fff';			
+			c.font = '60px "Croog", sans-serif';
 			c.textAlign = 'center';
-						c.globalAlpha = 1;
-			c.fillText(str, 0, 23);
+			c.globalAlpha = 1;
+			c.fillText(str, 0, 20);
 			c.restore();
+			age++;
 		}
 		arr.push(this);
 	}
@@ -163,10 +184,10 @@
 		this.fontColor = '#333';
 		var r = Math.random()*Math.PI/4 - Math.PI/8;
 		var age = 0;
+		var deathAge = 45;
 		this.liftVel = Math.random()*7 + 1;
 		var drag = 0.6 + Math.random()*0.33;
 		var lift = 0;
-		var deathAge = 45;
 		var grav = 0.03;
 		var oggrav = 0.02;
 		var xv = g.mouseX - g.pmouseX;
@@ -242,11 +263,5 @@
 		arr.push(this);
 		
 	}
-		
-	}
-	</script>
 	
-</head>
-<body>
-</body>
-</html>
+}
