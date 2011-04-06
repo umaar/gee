@@ -7,18 +7,22 @@ body {
 color: #333;
 font: 11px/18px Lucida Grande, Arial, sans-serif;
 }
+
 canvas { 
 margin: 20px 0;
+background: #eee url(gee.png) center 47% no-repeat;
 }
+
 #container { 
 width: 515px;
 margin: 0 auto;
 }
+
 dt { 
-float: left;
-width: 110px;
-clear: both;
-font-weight: bold;
+	float: left;
+	width: 110px;
+	clear: both;
+	font-weight: bold;
 }
 
 p, ul, ol { 
@@ -27,20 +31,24 @@ p, ul, ol {
 	line-height: 20px; 
 	margin-bottom: 24px; 
 }
+
 h1, h2, h3, h4, h5, h6 {
     font-family: "Helvetica Neue", helvetica, arial, sans-serif;
     color: #222;
     margin: 30px 0;
 }
+
 h2 code { 
 font-weight: normal;
 font-size: 15px;
 }
+
 dd { 
 float: right;
 width: 340px;
 margin-bottom: 15px;
 }
+
 hr { 
 height: 1;
 clear: both;
@@ -48,10 +56,12 @@ border: 0;
 background-color: #eee;
 margin: 15px 0 18px 0;
 }
+
 code { 
 font-family: Monaco, monospace;
 color: #555;
 }
+
 dt:after { 
 display: block;
 float: right;
@@ -66,32 +76,39 @@ margin-right: -35px;
 text-align: center;
 width: 20px;
 }
+
 dt.function:after { 
 content: 'func';
 background-color: #e61d5f;
 }
+
 dt.number:after { 
 content: 'num';
 background-color: #00aeef;
 }
+
 dt.string:after { 
 content: 'str';
 background-color: #1ed36f;
 }
+
 dt.dom:after { 
 content: 'DOM';
 font-size: 8px;
 background-color: #888;
 }
+
 dt.boolean:after { 
 content: 'bool';
 background-color: #54396e;
 }
+
 .hint {
 display: block;
 color: #666;
 font-style: italic;
 }
+
 dt.readonly { 
 background: url(lock.gif) left center no-repeat;
 padding-left: 30px;
@@ -101,31 +118,33 @@ margin-left: -30px;
 footer { 
 margin-top: 20px;
 margin-bottom: 30px;
-	background-color: #eee;
-	width: 510px;
-	padding: 10px;
-	clear: both;
-	color: #444;
-	
+background-color: #eee;
+width: 510px;
+padding: 10px;
+clear: both;
+color: #444;	
 }
+
 a:link {
-    color: #00aeff;
+color: #00aeff;
 }
 
 a:visited {
-    color: #0fa954;
+color: #0fa954;
 }
 
 a:hover {
-    color: #e61d5f;
+color: #e61d5f;
 }
 
 a:active {
-    color: #54396e;
+color: #54396e;
 }
+
 .clear { 
 clear: both;
 }
+
 pre { 
     margin: 20px 0 20px 0;
     padding: 15px;

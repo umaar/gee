@@ -1,7 +1,35 @@
-<html>
+<!doctype html>
 <head>
+<!--
+/*
+ * MyFonts Webfont Build ID 745351, 2011-04-06T13:18:59-0400
+ * 
+ * The fonts listed in this notice are subject to the End User License
+ * Agreement(s) entered into by the website owner. All other parties are 
+ * explicitly restricted from using the Licensed Webfonts(s).
+ * 
+ * You may obtain a valid license at the URLs below.
+ * 
+ * Webfont: Croog Bold
+ * URL: http://new.myfonts.com/fonts/tipografiaramis/croog/bold/
+ * Foundry: TipografiaRamis
+ * Copyright: Copyright (c) 2009 by TipografiaRamis. All rights reserved.
+ * License: http://www.myfonts.com/viewlicense?1056
+ * Licensed pageviews: 10,000/month
+ * CSS font-family: Croog-Bold
+ * CSS font-weight: normal
+ * 
+ * (c) 2011 Bitstream, Inc
+*/
+-->
+<script type="text/javascript">
+var myfont_webfont_test = false;
+var woffEnabled = true;
+var customPath = "docs/";
+</script>
 <title>gee.js</title>
 <link href="docs/style.css" media="screen" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="docs/MyFontsWebfontsKit.js"></script>
 <script type="text/javascript" src="build/gee.min.js"></script> 
 <script type="text/javascript" src="docs/demo.js"></script>
 <script type="text/javascript" src="docs/prettify.js"></script>
@@ -9,7 +37,6 @@
 window.onload = function() {
 
 	prettyPrint();
-	
 	var g = new GEE( { width: 513, height: 513, container:  document.getElementById('canvas-holder') } );
 
 	demo(g);
@@ -120,7 +147,7 @@ g.draw = function() {
 }
 </pre>
 
-<p>Below is a list of all of <code>GEE</code>'s properties. The &nbsp;<img src="lock.gif" alt="lock" />&nbsp; indicates that a property is read-only.</p>
+<p>Below is a list of all of <code>GEE</code>'s properties. The &nbsp;<img src="docs/lock.gif" alt="lock" />&nbsp; indicates that a property is read-only.</p>
 
 <dl id="doc">
 <dt class="special readonly">ctx</dt>	<dd>current rendering context</dd>

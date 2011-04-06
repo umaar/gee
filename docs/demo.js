@@ -3,7 +3,7 @@ function demo(g) {
 	var signs = [];
 	var topSigns = [];
 	
-	g.ctx.font = '15px "Croog", sans-serif';
+	g.ctx.font = '15px Croog-Bold, sans-serif';
 	
 	var line = function(ctx, x1, y1, x2, y2) {
 		
@@ -15,8 +15,7 @@ function demo(g) {
 	
 	g.draw = function() {
 	
-		g.ctx.fillStyle = '#eee';
-		g.ctx.fillRect(0, 0, g.width, g.height);	
+		g.ctx.clearRect(0, 0, g.width, g.height);
 		
 		g.ctx.shadowColor = '#fff';
 		g.ctx.shadowBlur = 0;
@@ -163,7 +162,7 @@ function demo(g) {
 			c.arc(0, 0, radius, 0, Math.PI*2, false);
 			c.fill();
 			c.fillStyle = '#fff';			
-			c.font = '60px "Croog", sans-serif';
+			c.font = '60px Croog-Bold, sans-serif';
 			c.textAlign = 'center';
 			c.globalAlpha = 1;
 			c.fillText(str, 0, 20);
@@ -186,9 +185,9 @@ function demo(g) {
 		var age = 0;
 		var deathAge = 45;
 		this.liftVel = Math.random()*7 + 1;
-		var drag = 0.6 + Math.random()*0.33;
+		var drag = 0.5 + Math.random()*0.33;
 		var lift = 0;
-		var grav = 0.03;
+		var grav = 0.00;
 		var oggrav = 0.02;
 		var xv = g.mouseX - g.pmouseX;
 		var yv = g.mouseY - g.pmouseY;
@@ -209,7 +208,7 @@ function demo(g) {
 		this.draw = function(c) {
 			
 			c.save();
-			c.translate(x-xv, y-yv);
+			c.translate(Math.round(x-xv), Math.round(y-yv));
 			
 			xv *= drag;
 			yv *= drag;
@@ -250,7 +249,7 @@ function demo(g) {
 			c.lineTo(  spikeWidth/2, -spikeHeight);
 			c.fill();
 			
-			c.font = '11px "Croog", sans-serif';
+			c.font = '11px Croog-Bold, sans-serif';
 			c.shadowColor = 'rgba(0,0,0,0)';
 			c.shadowBlur = 0;
 			c.fillStyle = this.fontColor;
