@@ -54,13 +54,6 @@ window['GEE'] = function(params) {
 		params['context'] = '2d';
 	}
 	
-	if ( !params['width'] ) {
-		params['width'] = 500;
-	}
-	
-	if ( !params['height'] ) {
-		params['height'] = 500;
-	}
 	
 	// Create domElement, grab context
 	
@@ -81,21 +74,54 @@ window['GEE'] = function(params) {
 	if ( params['fullscreen'] ) {
 
 		var onResize = function() {
+			
 			getOffset();
-			_privateParts['width'] = d['width'] = window.innerWidth;
-			_privateParts['height'] = d['height'] = window.innerHeight;
+			
+			if ( params['width'] ) {
+				_privateParts['width'] = d['width'] = params['width'];
+			} else { 
+				_privateParts['width'] = d['width'] = window.innerWidth;
+			}
+			
+			if ( params['height'] ) {
+				_privateParts['height'] = d['height'] = params['height'];	
+			} else { 
+
+				_privateParts['height'] = d['height'] = window.innerHeight;
+			}
+			
+			if ( !_this.loop ) {
+				
+				// Why do I need this?
+				if ( _this['draw'] ) {
+					_this['draw']();
+				}
+				
+			}
+			
 		};
+		
 		window.addEventListener( 'resize', onResize, false );
 		onResize();
 		
 		if ( !params['container'] ) {
-			params['container'] = document['body'];
+			document.body.style.margin = '0px';
+			document.body.style.padding = '0px';
+			document.body.style.overflow = 'hidden';
 		}
-		document.body.style.margin = '0px';
-		document.body.style.padding = '0px';
-		document.body.style.overflow = 'hidden';
+		
+		params['container'] = params['container'] || document.body;
+		
 		
 	} else { 
+		
+		if ( !params['width'] ) {
+			params['width'] = 500;
+		}
+		
+		if ( !params['height'] ) {
+			params['height'] = 500;
+		}
 		
 		getOffset();
 		_this.__defineSetter__('width', function(v) {
@@ -118,16 +144,16 @@ window['GEE'] = function(params) {
 		getOffset();
 	}	
 	
-
 	var getter = function(n) {
 		_this.__defineGetter__(n, function() {
 			return _privateParts[n];
 		});
 	};
-	
+
 	// Would love to reduce this to params.
 	
 	getter('ctx');
+	getter('domElement');
 	getter('width');
 	getter('height');
 	getter('frameCount');
