@@ -183,6 +183,8 @@ window['GEE'] = function(params) {
 	_this['mouseup'] = n;
 	_this['mousemove'] = n;
 	_this['mousedrag'] = n;
+	_this['mouseover'] = n;
+	_this['mouseout'] = n;
 	
 	// Custom Getters & Setters
 	
@@ -213,8 +215,14 @@ window['GEE'] = function(params) {
 	
 	// Listeners
 	
-	d.addEventListener('mouseenter', function(e) {
+	d.addEventListener('mouseover', function(e) {
 		getOffset();
+		_this['mouseover']();
+	}, false);
+	
+	d.addEventListener('mouseout', function(e) {
+		getOffset();
+		_this['mouseout']();
 	}, false);
 	
 	var fireMouseMove = function(e) {
