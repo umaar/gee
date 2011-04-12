@@ -123,7 +123,12 @@ window['GEE'] = function(params) {
 			params['height'] = 500;
 		}
 		
+		
+		
+		window.addEventListener( 'resize', getOffset, false );
 		getOffset();
+		
+		
 		_this.__defineSetter__('width', function(v) {
 			_privateParts['width'] = d['width'] = v;
 		});
