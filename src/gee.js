@@ -32,7 +32,8 @@ window['GEE'] = function(params) {
 			'mouseY':       0,
 			'pmouseX':	    undefined,
 			'pmouseY':	    undefined,
-			'mousePressed': false
+			'mousePressed': false,
+			'offset': {x:0, y:0}
 		},
 		_actualFrameTime = undefined,
 		d; // shorthand for the dom element
@@ -45,7 +46,8 @@ window['GEE'] = function(params) {
 			x += obj.offsetLeft;
 			obj = obj.offsetParent;
 		}
-		offset = { x:x, y:y };
+		_privateParts['offset'].x = x;
+		_privateParts['offset'].y = y;
 	};
 	
 	// Default parameters
@@ -230,8 +232,8 @@ window['GEE'] = function(params) {
 	};
 	
 	var updateMousePosition = function(e) {
-		var x = e.pageX - offset.x;
-		var y = e.pageY - offset.y;
+		var x = e.pageX - _privateParts['offset'].x;
+		var y = e.pageY - _privateParts['offset'].y;
 		if (_privateParts['pmouseX'] == undefined) {
 			_privateParts['pmouseX'] = x;
 			_privateParts['pmouseY'] = y;
@@ -289,13 +291,10 @@ window['GEE'] = function(params) {
               };
     })();
 		
-	_idraw = function() {
-	
-		if ( _this['loop'] ) {
-			requestAnimationFrame( _idraw );
-		}
+	_privateParts['_idraw'] = function() {
 	
 		_privateParts['frameCount']++;
+		
 		var prev = new Date().getTime();
 		
 		_this['draw']();
@@ -308,8 +307,12 @@ window['GEE'] = function(params) {
 			_actualFrameTime = _privateParts['desiredFrameTime'];
 		}
 		
+		if ( _this['loop'] ) {
+			requestAnimationFrame( _privateParts['_idraw'] );
+		}
+		
 	};
 	
-	_idraw();
+	_privateParts['_idraw']();
 	
 }

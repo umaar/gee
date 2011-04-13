@@ -72,6 +72,7 @@ function demo(g) {
 		}
 	};
 	
+	
 	g.mousedrag = function() {
 		var s = new Sign(signs, 'g.mousedrag()', g.mouseX, g.mouseY, 1);
 		s.boxColor = '#333';
